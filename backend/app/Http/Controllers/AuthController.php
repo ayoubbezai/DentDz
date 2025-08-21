@@ -7,12 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\SignupRequest;
+use App\Http\Requests\SignupClinicRequest;
 
 class AuthController extends Controller
 {
     // Signup
-    public function signup(SignupRequest $request)
+    public function signup(SignupClinicRequest $request)
     {
         $user = User::create([
             'name' => $request->name,
