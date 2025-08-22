@@ -12,14 +12,17 @@ class PlanSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $plans = [
+            ['name' => 'basic', 'value' => 1],
+            ['name' => 'pro', 'value' => 2],
+            ['name' => 'enterprise', 'value' => 3]
+        ];
 
-        $plans = ["basic", "pro", "enterprise"];
-
-foreach ($plans as $plan) {
-    \App\Models\Plan::create([
-        'plan_name' => $plan,
-    ]);
-}
+        foreach ($plans as $plan) {
+            \App\Models\Plan::create([
+                'plan_name' => $plan['name'],
+                'value' => $plan['value'],
+            ]);
+        }
     }
 }

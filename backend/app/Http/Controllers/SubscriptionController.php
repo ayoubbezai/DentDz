@@ -53,7 +53,7 @@ class SubscriptionController extends Controller
      * Display the specified resource.
      */
 
-    
+
     public function show(string $id)
     {
         //
@@ -71,23 +71,30 @@ class SubscriptionController extends Controller
         if (!$subscription) {
             return response()->json([
                 'success' => false,
-                'error' => 'subscription_not_found',
+                'error' => 'not_found',
             ], 404);
         }
 
 
-        $subscription->update($request);
+        $subscription->update($request->only([
+        'clinic_id',
+        'plan_id',
+        'price',
+        'currency',
+        'start_date',
+        'end_date',
+        'payment_method'
+    ]));
 
         return response()->json([
             'success' => true,
-            'data' => $subscription->fresh(),
+            'data' => [],
         ], 200);
 
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
-            'error' => 'subscription_update_failed',
-            'message' => $e->getMessage()
+            'error' => 'failed',
         ], 500);
     }
 }
