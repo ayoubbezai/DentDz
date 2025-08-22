@@ -24,7 +24,7 @@ class SignupClinicRequest extends FormRequest
             'phone_number_1'    => 'required|string|max:255',
             'phone_number_2'    => 'nullable|string|max:255',
             'clinic_email'      => 'nullable|email',
-            'clinic_logo_512'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+            'clinic_logo_512'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ];
     }
 
@@ -73,7 +73,7 @@ class SignupClinicRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'success' => false,
-                'error'  => $validator->errors()->all(),
+                'errors'  => $validator->errors()->all(),
             ], 422)
         );
     }
