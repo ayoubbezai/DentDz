@@ -33,4 +33,10 @@ class Clinic extends Model
         'phone_number_2' => 'encrypted',
         'clinic_email' => 'encrypted',
     ];
+
+    // each clinic has muitliple subscriptions
+    public function Subscriptions (){
+        return $this->hasMany(Subscription::class);
+    }
+
 }

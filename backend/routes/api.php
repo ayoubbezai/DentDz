@@ -16,4 +16,5 @@ Route::middleware(['web'])->group(function () {
 // auth : false
 // role : null
 // subscription : null
+
 Route::post('/v1/clinic',[ClinicController::class , 'store']);
