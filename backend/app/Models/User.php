@@ -17,7 +17,10 @@ class User extends Authenticatable
     public $incrementing = false; // Disable auto-increment
     protected $keyType = 'string'; // Key type is string
 
-
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     protected static function boot()
     {
@@ -29,6 +32,14 @@ class User extends Authenticatable
                 $model->{$model->getKeyName()} = (string) Str::uuid();
             }
         });
+    }
+
+     protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 
     // Optional: Relationship to Role

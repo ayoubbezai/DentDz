@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\SignupClinicRequest;
+use App\Http\Requests\Clinic\SignupClinicRequest;
 
 class AuthController extends Controller
 {

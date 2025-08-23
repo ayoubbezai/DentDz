@@ -27,7 +27,9 @@ class ClinicController extends Controller
      * Display a listing of the resource.
      */
 
-    // get all clinics // auth : true // role : super_admin // quires : per_page / page / search / wilaya / sort_dir / sort_by / later :: isSubscriped /subscription_plan
+    // get all clinics // auth : true
+    // role : super_admin
+    // quires : per_page / page / search / wilaya / sort_dir / sort_by / later :: isSubscriped /subscription_plan
     public function index(ClinicIndexRequest $request)
     {
         try {

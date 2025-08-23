@@ -24,19 +24,15 @@ import { useState, useEffect } from "react";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Overview", href: "/overview" },
-  { icon: Users, label: "Patients", href: "/patients" },
+  { icon: Users, label: "Patients", href: "/dentist/patients-list" },
   { icon: Calendar, label: "Appointments", href: "/appointments" },
-  { icon: Receipt, label: "Billing & Payments", href: "/billing" },
+  { icon: Receipt, label: "Billing", href: "/billing" },
   { icon: FileText, label: "Prescriptions", href: "/prescriptions" },
   { icon: Package, label: "Inventory", href: "/inventory" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: ClipboardList, label: "Tasks", href: "/tasks" },
   { icon: FolderOpen, label: "Documents", href: "/documents" },
   { icon: Settings, label: "Settings", href: "/settings" },
-  { icon: Users, label: "Staff Management", href: "/staff" },
-  { icon: FileText, label: "Reports", href: "/reports" },
-  { icon: Calendar, label: "Schedule", href: "/schedule" },
-  { icon: Package, label: "Supplies", href: "/supplies" },
 ];
 
 export default function NavBar({ children }: { children: React.ReactNode }) {
@@ -70,32 +66,32 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white">
+    <div className="flex h-screen overflow-hidden bg-background">
       {/* Mobile Header */}
-      <div className="md:hidden flex flex-row justify-between items-center p-4 bg-white border-b sticky top-0 z-40 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8">
+      <div className="md:hidden flex flex-row justify-between items-center p-2 bg-card border-b sticky top-0 z-40 shadow-sm">
+        <div className="flex items-center gap-1.5">
+          <div className="h-6 w-6">
             <Image
               alt="logo"
               src={Logo}
-              width={32}
-              height={32}
+              width={24}
+              height={24}
               className="object-contain"
             />
           </div>
-          <h1 className="text-lg font-semibold text-primary-dark">DentDz</h1>
+          <h1 className="text-sm font-medium text-foreground/70">DentDz</h1>
         </div>
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
-          className="h-9 w-9"
+          className="h-7 w-7 text-muted-foreground/60 hover:text-neutral-100"
         >
           {mobileMenuOpen ? (
-            <X className="w-5 h-5" />
+            <X className="w-3.5 h-3.5" />
           ) : (
-            <Menu className="w-5 h-5" />
+            <Menu className="w-3.5 h-3.5" />
           )}
         </Button>
       </div>
@@ -103,54 +99,52 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
       {/* Sidebar - Desktop */}
       <aside
         className={`
-        hidden md:flex flex-col bg-white border-r transition-all duration-300 ease-in-out
-        ${isCollapsed ? "w-16" : "w-64"}
+        hidden md:flex flex-col bg-card border-r transition-all duration-300 ease-in-out
+        ${isCollapsed ? "w-12" : "w-52"}
       `}
       >
         {/* Logo and Toggle Section */}
         <div
           className={`flex items-center ${
-            isCollapsed ? "justify-center p-3" : "justify-between p-4"
-          } border-b`}
+            isCollapsed ? "justify-center p-1.5" : "justify-between p-2.5"
+          } border-b py-3.5 mb-2`}
         >
           {!isCollapsed && (
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8">
+            <div className="flex items-center gap-1.5">
+              <div className="h-6 w-6">
                 <Image
                   alt="logo"
                   src={Logo}
-                  width={32}
-                  height={32}
+                  width={24}
+                  height={24}
                   className="object-contain"
                 />
               </div>
-              <h1 className="text-lg font-semibold text-primary-dark">
-                DentDz
-              </h1>
+              <h1 className="text-sm font-medium text-foreground/70">DentDz</h1>
             </div>
           )}
 
-          {isCollapsed && (
-            <div className="h-8 w-8">
+          {/* {isCollapsed && (
+            <div className="h-6 w-6">
               <Image
                 alt="logo"
                 src={Logo}
-                width={32}
-                height={32}
+                width={24}
+                height={24}
                 className="object-contain"
               />
             </div>
-          )}
+          )} */}
 
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="h-8 w-8"
+            className="h-6 w-6 text-muted-foreground/60 hover:text-foreground hover:bg-neutral-100"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             <ChevronLeft
-              className={`h-4 w-4 transition-transform ${
+              className={`h-3 w-3 transition-transform ${
                 isCollapsed ? "rotate-180" : ""
               }`}
             />
@@ -158,8 +152,8 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Navigation Links with Scroll */}
-        <div className="flex-1 overflow-y-auto py-2">
-          <ul className="space-y-1 px-2">
+        <div className="flex-1 overflow-y-auto py-1.5">
+          <ul className="space-y-2 px-1.5">
             {navItems.map((item, index) => {
               const isActive = pathname === item.href;
               return (
@@ -167,19 +161,19 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
                   <a
                     href={item.href}
                     className={`
-                      flex items-center rounded-lg text-sm font-medium transition-colors
+                      flex items-center rounded-md text-xs font-normal transition-all
                       ${
                         isActive
                           ? "bg-primary/10 text-primary"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                          : "text-muted-foreground/60 hover:bg-neutral-100 hover:text-foreground"
                       }
-                      ${isCollapsed ? "justify-center p-2" : "p-2 gap-2"}
+                      ${isCollapsed ? "justify-center p-1.5" : "p-2 gap-2"}
                     `}
                     title={isCollapsed ? item.label : ""}
                   >
-                    <item.icon className="h-5 w-5 flex-shrink-0" />
+                    <item.icon className="h-4 w-4 flex-shrink-0" />
                     {!isCollapsed && (
-                      <span className="truncate">{item.label}</span>
+                      <span className="truncate text-xs">{item.label}</span>
                     )}
                   </a>
                 </li>
@@ -190,18 +184,20 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
 
         {/* Footer Section */}
         <div
-          className={`border-t p-2 ${isCollapsed ? "flex justify-center" : ""}`}
+          className={`border-t p-1.5 ${
+            isCollapsed ? "flex justify-center" : ""
+          }`}
         >
           <Button
             variant="outline"
             className={`
-              gap-2 text-sm font-medium h-10
-              ${isCollapsed ? "w-10 px-0" : "w-full justify-start"}
+              gap-2 text-xs font-normal h-8 text-muted-foreground/60 hover:text-foreground
+              ${isCollapsed ? "w-8 px-0" : "w-full justify-start"}
             `}
             title={isCollapsed ? "Logout" : ""}
           >
-            <LogOut className="h-4 w-4" />
-            {!isCollapsed && <span>Logout</span>}
+            <LogOut className="h-3 w-3" />
+            {!isCollapsed && <span className="text-xs">Logout</span>}
           </Button>
         </div>
       </aside>
@@ -213,19 +209,19 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
             className="md:hidden fixed inset-0 bg-black/20 z-40"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <aside className="md:hidden fixed top-0 left-0 h-full w-64 bg-white border-r z-50 shadow-xl transform transition-transform duration-300 ease-in-out">
-            <div className="flex items-center justify-between p-4 border-b">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8">
+          <aside className="md:hidden fixed top-0 left-0 h-full w-56 bg-card border-r z-50 shadow-xl transform transition-transform duration-300 ease-in-out">
+            <div className="flex items-center justify-between p-2.5 border-b">
+              <div className="flex items-center gap-1.5">
+                <div className="h-6 w-6">
                   <Image
                     alt="logo"
                     src={Logo}
-                    width={32}
-                    height={32}
+                    width={24}
+                    height={24}
                     className="object-contain"
                   />
                 </div>
-                <h1 className="text-lg font-semibold text-primary-dark">
+                <h1 className="text-sm font-medium text-foreground/70">
                   DentDz
                 </h1>
               </div>
@@ -233,15 +229,15 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
                 variant="ghost"
                 size="icon"
                 onClick={() => setMobileMenuOpen(false)}
-                className="h-8 w-8"
+                className="h-6 w-6 text-muted-foreground/60 hover:text-foreground"
                 aria-label="Close menu"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" />
               </Button>
             </div>
 
             <div className="h-full overflow-y-auto py-2">
-              <ul className="space-y-1 px-2">
+              <ul className="space-y-0.5 px-1.5">
                 {navItems.map((item, index) => {
                   const isActive = pathname === item.href;
                   return (
@@ -250,16 +246,16 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
                         className={`
-                          flex items-center gap-2 p-2 rounded-lg text-sm font-medium transition-colors
+                          flex items-center gap-2 p-2 rounded-md text-xs font-normal transition-colors
                           ${
                             isActive
                               ? "bg-primary/10 text-primary"
-                              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                              : "text-muted-foreground/60 hover:bg-neutral-100 hover:text-foreground"
                           }
                         `}
                       >
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
-                        <span>{item.label}</span>
+                        <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                        <span className="text-xs">{item.label}</span>
                       </a>
                     </li>
                   );
@@ -267,13 +263,13 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
               </ul>
             </div>
 
-            <div className="border-t p-2">
+            <div className="border-t p-1.5">
               <Button
                 variant="outline"
-                className="w-full gap-2 text-sm font-medium h-10 justify-start"
+                className="w-full gap-2 text-xs font-normal h-8 justify-start text-muted-foreground/60 hover:text-foreground"
               >
-                <LogOut className="h-4 w-4" />
-                <span>Logout</span>
+                <LogOut className="h-3 w-3" />
+                <span className="text-xs">Logout</span>
               </Button>
             </div>
           </aside>
@@ -281,7 +277,7 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto bg-gray-50">{children}</main>
+      <main className="flex-1 overflow-auto bg-background">{children}</main>
     </div>
   );
 }

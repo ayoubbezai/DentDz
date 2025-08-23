@@ -13,9 +13,23 @@ Route::middleware(['web'])->group(function () {
     // subscription : null
     // midlware : web cuz its http only cookie auth
     // note : need to be fixed to return the plan and subscripton and the role
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::middleware('auth:sanctum')->get('/me', [AuthController::class, 'me']);
+
+
+    Route::post('/v1/login', [AuthController::class, 'login']);
+
+
+    // Route::post('/logout', [AuthController::class, 'logout']);
+    // Route::middleware('auth:sanctum')->get('/me', [AuthController::class, 'me']);
+
+
+
+// get all subscription by super_admin or only for one clinic by the clinic it self
+// version : 1
+// auth : true
+// roles : superAdmin , clinic
+// subscription : all
+    Route::get('/v1/subscription',[SubscriptionController::class , 'index'])->middleware('auth:sanctum');
+
 });
 
 
@@ -56,6 +70,8 @@ Route::delete('/v1/clinic/{id}',[ClinicController::class , 'destroy']);
 // role : super_admin
 // subscription : null
 Route::get('/v1/clinic',[ClinicController::class , 'index']);
+
+
 
 
 
