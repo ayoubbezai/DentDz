@@ -29,7 +29,6 @@ export interface Patient {
 }
 
 export interface AddModalProps {
-  isVisible: boolean;
+  isAddModalOpen: boolean;
   closeModal: () => void;
-
 }

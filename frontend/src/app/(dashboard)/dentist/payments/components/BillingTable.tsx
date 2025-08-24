@@ -23,6 +23,7 @@ import {
   Banknote,
   Smartphone,
 } from "lucide-react";
+import React from "react"
 
 interface BillingItem {
   id: string;
@@ -53,7 +54,8 @@ const formatDate = (date: Date) => {
   });
 };
 
-export default function BillingTable() {
+export const BillingTable = React.memo(function BillingTableComponent() {
+
   // Hardcoded test data
   const testData: BillingItem[] = [
     {
@@ -347,3 +349,4 @@ export default function BillingTable() {
     </div>
   );
 }
+)

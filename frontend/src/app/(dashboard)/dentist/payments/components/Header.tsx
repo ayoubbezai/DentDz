@@ -11,17 +11,47 @@ import {
   Download,
   FileText,
   Receipt,
+  ChevronDown,
+  Calendar,
+  FileSpreadsheet,
+  FileTextIcon,
 } from "lucide-react";
 import ToppNavBar from "@/components/layout/TopNavBar";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar as CalendarComp } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 
 interface HeaderProps {
   activeView: "billing" | "payments";
   setActiveView: (view: "billing" | "payments") => void;
+  onAddInvoice?: () => void;
 }
 
-export default function Header({ activeView, setActiveView }: HeaderProps) {
+export default function Header({
+  activeView,
+  setActiveView,
+  onAddInvoice = () => {},
+}: HeaderProps) {
+  const [exportOpen, setExportOpen] = useState(false);
+  const [dateRange, setDateRange] = useState({
+    from: startOfMonth(subMonths(new Date(), 1)), // Default to start of last month
+    to: endOfMonth(subMonths(new Date(), 1)), // Default to end of last month
+  });
+  const exportRef = useRef<HTMLDivElement>(null);
+
   const financialData = {
     totalCollected: 12540.75,
     outstanding: 3240.5,
@@ -108,13 +138,41 @@ export default function Header({ activeView, setActiveView }: HeaderProps) {
     );
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        exportRef.current &&
+        !exportRef.current.contains(event.target as Node)
+      ) {
+        setExportOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleExport = (format: "csv" | "pdf") => {
+    console.log(`Exporting ${format} with date range:`, dateRange);
+    setExportOpen(false);
+    // Add your export logic here
+  };
+
   // Sample data for the sections
   const billingItems = 42;
   const paymentItems = 28;
 
   return (
     <>
-      <ToppNavBar title="Payments" search_placeholder="Search payments..." />
+      <ToppNavBar
+        title="Payments"
+        search_placeholder={
+          activeView === "billing" ? "Search Invoice Pay..." : "Search Patients Pay..."
+        }
+      />
       <hr className="my-3 border-border" />
 
       {/* Financial Cards Section */}
@@ -199,31 +257,98 @@ export default function Header({ activeView, setActiveView }: HeaderProps) {
         </div>
 
         <div className="flex items-center space-x-2">
+          {/* Date Range Picker */}
+
           <Button
             variant="outline"
             size="sm"
-            className="flex items-center gap-1.5 h-8 text-xs border-border text-muted-foreground hover:text-foreground   transition-colors"
+            className="flex items-center gap-1.5 h-8 rounded-[4px] text-xs border-border text-muted-foreground hover:text-foreground transition-colors"
           >
             <Filter className="h-3.5 w-3.5" />
             Filter
           </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-1.5 h-8 text-xs border-border text-muted-foreground hover:text-foreground hover:bg-netural-200 transition-colors"
-          >
-            <Download className="h-3.5 w-3.5" />
-            Export
-          </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1.5 h-8 rounded-[4px] text-xs border-border text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Calendar className="h-3.5 w-3.5" />
+                {dateRange.from && dateRange.to ? (
+                  <>
+                    {format(dateRange.from, "MMM dd, yyyy")} -{" "}
+                    {format(dateRange.to, "MMM dd, yyyy")}
+                  </>
+                ) : (
+                  "Select date range"
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <CalendarComp
+                initialFocus
+                mode="range"
+                defaultMonth={dateRange.from}
+                selected={dateRange}
+                onSelect={(range: any) => setDateRange(range)}
+                numberOfMonths={2}
+              />
+            </PopoverContent>
+          </Popover>
 
-          <Button
-            size="sm"
-            className="flex items-center gap-1.5 h-8 text-xs transition-colors"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Add {activeView === "billing" ? "Invoice" : "Payment"}
-          </Button>
+          {/* Export Dropdown */}
+          <div className="relative" ref={exportRef}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1.5 h-8 text-xs border-border text-muted-foreground hover:text-foreground hover:bg-neutral-200 transition-colors rounded-[4px]"
+              onClick={() => setExportOpen(!exportOpen)}
+            >
+              <Download className="h-3.5 w-3.5" />
+              Export
+              <ChevronDown className="h-3.5 w-3.5 ml-1" />
+            </Button>
+
+            {exportOpen && (
+              <div className="absolute top-full right-0 mt-1 w-44 bg-white border border-border rounded-md shadow-lg z-50 py-1.5 overflow-hidden">
+                <button
+                  onClick={() => handleExport("csv")}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left hover:bg-gray-50 transition-colors group"
+                >
+                  <div className="relative">
+                    <FileSpreadsheet className="h-4 w-4 text-green-600" />
+                    <div className="absolute -inset-1 bg-green-100 rounded-full opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+                  </div>
+                  <span className="font-medium">CSV Export</span>
+                </button>
+
+                <div className="h-px bg-border my-1" />
+
+                <button
+                  onClick={() => handleExport("pdf")}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left hover:bg-gray-50 transition-colors group"
+                >
+                  <div className="relative">
+                    <FileTextIcon className="h-4 w-4 text-red-600" />
+                    <div className="absolute -inset-1 bg-red-100 rounded-full opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+                  </div>
+                  <span className="font-medium">PDF Export</span>
+                </button>
+              </div>
+            )}
+          </div>
+          {activeView === "billing" && (
+            <Button
+              size="sm"
+              className="flex items-center gap-1.5 h-8 rounded-[4px] text-xs transition-colors"
+              onClick={onAddInvoice}
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add Invoice
+            </Button>
+          )}
         </div>
       </div>
 

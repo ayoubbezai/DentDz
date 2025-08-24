@@ -1,18 +1,8 @@
 import { Button } from "@/components/ui/button";
-import {
-  Users,
-  Filter,
-  Grid,
-  List,
-  Plus,
-
-} from "lucide-react";
+import { Users, Filter, Grid, List, Plus } from "lucide-react";
 import { HeaderProps } from "../types";
 
-import { useEffect, useState } from "react";
-import { useGlobalUI } from "@/context/GlobalUIContext";
 import ToppNavBar from "@/components/layout/TopNavBar";
-
 
 export default function Header({
   activeView,
@@ -22,11 +12,7 @@ export default function Header({
   patientCounts,
   onAddPatient = () => {},
   onFilterClick = () => {},
-
 }: HeaderProps) {
-
-
-
   return (
     <>
       <ToppNavBar
@@ -73,24 +59,25 @@ export default function Header({
             Total Patients
           </span>
         </div>
+
         <div className="flex items-center space-x-3">
           <Button
             variant="outline"
             size="sm"
-            className="flex items-center gap-1.5 h-7 text-xs border-border text-muted-foreground/70 hover:text-foreground hover:bg-neutral-100 transition-colors"
+            className="flex items-center gap-1.5 h-8 text-xs border-border text-muted-foreground/70 hover:text-foreground hover:bg-neutral-100 transition-colors"
             onClick={onFilterClick}
           >
             <Filter className="h-3.5 w-3.5" />
             Filter
           </Button>
 
-          <div className="flex items-center border border-border rounded-sm">
+          <div className="flex items-center gap-0.5 border border-border rounded-sm">
             <button
               onClick={() => onViewModeChange("grid")}
-              className={`p-[5px] relative transition-colors ${
+              className={`p-[7px] relative rounded-[4px] transition-colors ${
                 viewMode === "grid"
                   ? "text-primary"
-                  : "text-muted-foreground/70 hover:text-foreground"
+                  : "text-muted-foreground/70 h-7 hover:text-foreground"
               }`}
             >
               {viewMode === "grid" && (
@@ -101,10 +88,10 @@ export default function Header({
             <div className="h-4 w-px bg-border"></div>
             <button
               onClick={() => onViewModeChange("list")}
-              className={`p-[5px] relative transition-colors ${
+              className={`p-[7px] rounded-[4px] relative transition-colors ${
                 viewMode === "list"
                   ? "text-primary"
-                  : "text-muted-foreground/70 hover:text-foreground"
+                  : "text-muted-foreground/70 h-7 hover:text-foreground"
               }`}
             >
               {viewMode === "list" && (
@@ -116,7 +103,7 @@ export default function Header({
 
           <Button
             size="sm"
-            className="flex items-center rounded-[4px] gap-1.5 h-7 text-xs transition-colors"
+            className="flex items-center rounded-[4px] gap-1.5 h-8 text-xs transition-colors"
             onClick={onAddPatient}
           >
             <Plus className="h-3.5 w-3.5" />

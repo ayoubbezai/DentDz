@@ -4,7 +4,6 @@ import {
   X,
   User,
   Stethoscope,
-  CheckCircle,
   Check,
   Phone,
   Mail,
@@ -17,6 +16,7 @@ import {
 import { AddModalProps } from "../types/index";
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import Modal from "@/components/Modal";
 import {
   Select,
   SelectContent,
@@ -73,11 +73,7 @@ function parseDate(dateString: string): Date | undefined {
   return new Date(year, month, day);
 }
 
-export default function AddModal({
-  isVisible,
-  closeModal,
-
-}: AddModalProps) {
+export default function AddModal({ isAddModalOpen, closeModal }: AddModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(undefined);
@@ -306,7 +302,8 @@ export default function AddModal({
         currentCondition.trim(),
       ];
       updateFormData("medicalConditions", updatedConditions);
-      setCurrentCondition("");
+ 
+     setCurrentCondition("");
     }
   };
 
@@ -349,22 +346,11 @@ export default function AddModal({
   };
 
   return (
-    <div
-      className={`fixed top-1/2 right-3 -translate-y-1/2 h-[93vh] rounded-2xl w-[400px] max-w-1/3 bg-white z-50 shadow-lg transform transition-transform duration-300 ease-in-out
-            ${isVisible ? "translate-x-0" : "translate-x-full"}`}
+    <Modal
+      isAddModalOpen={isAddModalOpen}
+      closeModal={closeModal}
+      title={"Add New Patient"}
     >
-      <div className="p-3 border-b border-neutral-200 flex justify-between items-center">
-        <h2 className="text-base font-semibold text-neutral-800">
-          Add New Patient
-        </h2>
-        <button
-          onClick={closeModal}
-          className="p-1 rounded-full hover:bg-gray-100 transition-colors duration-200"
-        >
-          {}
-          <X className="h-4 w-4 text-neutral-800" />
-        </button>
-      </div>
       <div className="p-4 flex flex-col h-[calc(93vh-57px)]">
         {/* Steps indicator - Made more compact */}
         <div className="flex items-center w-5/6 mx-auto justify-between mb-1">
@@ -1028,6 +1014,6 @@ export default function AddModal({
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
