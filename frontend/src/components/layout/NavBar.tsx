@@ -66,7 +66,7 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-neutral-50">
       {/* Mobile Header */}
       <div className="md:hidden flex flex-row justify-between items-center p-2 bg-card border-b sticky top-0 z-40 shadow-sm">
         <div className="flex items-center gap-1.5">

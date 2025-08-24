@@ -59,6 +59,7 @@
 
   /* Neutral Colors */
   --neutral-100: oklch(0.97 0 0); /* Light gray for muted backgrounds */
+  --neutral-150: oklch(0.93 0 0); /* Light gray for muted backgrounds */
   --neutral-200: oklch(0.922 0 0); /* Border color */
   --neutral-500: oklch(0.556 0 0); /* Muted text */
   --neutral-700: oklch(0.145 0 0); /* Main text color */
@@ -79,7 +80,7 @@
   --background : #F9FAFB;
 
   /* UI Colors */
-  --border: var(--neutral-100);
+  --border: var(--neutral-150);
   --input: var(--neutral-200);
   --ring: oklch(0.808 0 0);
 }

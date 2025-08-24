@@ -11,6 +11,8 @@ import {
   MapPin,
   Trash2,
   UserCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { AddModalProps } from "../types/index";
 import { useState, useRef, useEffect } from "react";
@@ -89,10 +91,40 @@ export default function AddModal({
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Form data state
+  const [formData, setFormData] = useState({
+    // Step 1: General Info
+    firstName: "",
+    lastName: "",
+    dob: "",
+    gender: "",
+    phone: "",
+    email: "",
+    address: "",
+
+    // Step 2: Medical Info
+    medicalConditions: [] as string[],
+    medications: [] as string[],
+    allergies: [] as string[],
+    note: "",
+
+    // Step 3: Account Info
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  // Current input states
+  const [currentCondition, setCurrentCondition] = useState("");
+  const [currentMedication, setCurrentMedication] = useState("");
+  const [currentAllergy, setCurrentAllergy] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const steps = [
     { id: 1, name: "General Info", icon: User },
     { id: 2, name: "Medical Info", icon: Stethoscope },
-    { id: 3, name: "Account", icon: UserCircle }, 
+    { id: 3, name: "Account", icon: UserCircle },
   ];
 
   const handleNextStep = () => {
@@ -104,7 +136,7 @@ export default function AddModal({
         setAnimatingStep(0);
       }, 300);
     } else {
-      closeModal();
+      handleSubmit();
     }
   };
 
@@ -117,6 +149,66 @@ export default function AddModal({
         setAnimatingStep(0);
       }, 300);
     }
+  };
+
+  const handleSubmit = () => {
+    // Validate all required fields
+    if (!validateForm()) {
+      return;
+    }
+
+    // Prepare final data object
+    const submitData = {
+      ...formData,
+      dob: dateInput, // Use the formatted date input
+    };
+
+    // Log the data (replace with actual API call)
+    console.log("Submitting patient data:", submitData);
+
+    // Close modal after submission
+    closeModal();
+  };
+
+  const validateForm = () => {
+    // Basic validation - you can expand this as needed
+    if (currentStep === 1) {
+      if (
+        !formData.firstName ||
+        !formData.lastName ||
+        !dateInput ||
+        !formData.gender ||
+        !formData.phone
+      ) {
+        alert("Please fill all required fields in General Info");
+        return false;
+      }
+    }
+
+    if (currentStep === 3) {
+      if (
+        !formData.username ||
+        !formData.password ||
+        !formData.confirmPassword
+      ) {
+        alert("Please fill all required fields in Account Info");
+        return false;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        alert("Passwords do not match");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const updateFormData = (field: string, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const wasFullScreenBeforeUpload = useRef(false);
@@ -206,6 +298,56 @@ export default function AddModal({
       setDateInput(formatDate(date));
     }
   }, [date]);
+
+  // Functions to handle medical info
+  const addMedicalCondition = () => {
+    if (currentCondition.trim()) {
+      const updatedConditions = [
+        ...formData.medicalConditions,
+        currentCondition.trim(),
+      ];
+      updateFormData("medicalConditions", updatedConditions);
+      setCurrentCondition("");
+    }
+  };
+
+  const removeMedicalCondition = (index: number) => {
+    const updatedConditions = formData.medicalConditions.filter(
+      (_, i) => i !== index
+    );
+    updateFormData("medicalConditions", updatedConditions);
+  };
+
+  const addMedication = () => {
+    if (currentMedication.trim()) {
+      const updatedMedications = [
+        ...formData.medications,
+        currentMedication.trim(),
+      ];
+      updateFormData("medications", updatedMedications);
+      setCurrentMedication("");
+    }
+  };
+
+  const removeMedication = (index: number) => {
+    const updatedMedications = formData.medications.filter(
+      (_, i) => i !== index
+    );
+    updateFormData("medications", updatedMedications);
+  };
+
+  const addAllergy = () => {
+    if (currentAllergy.trim()) {
+      const updatedAllergies = [...formData.allergies, currentAllergy.trim()];
+      updateFormData("allergies", updatedAllergies);
+      setCurrentAllergy("");
+    }
+  };
+
+  const removeAllergy = (index: number) => {
+    const updatedAllergies = formData.allergies.filter((_, i) => i !== index);
+    updateFormData("allergies", updatedAllergies);
+  };
 
   return (
     <div
@@ -319,7 +461,7 @@ export default function AddModal({
                   : `translateX(-${(currentStep - 1) * (100 / 3)}%)`,
             }}
           >
-            {/* Step 1 */}
+            {/* Step 1 - General Info */}
             <div
               className={`w-1/3 p-2 transition-opacity duration-500 ${
                 currentStep === 1 ? "opacity-100" : "opacity-40"
@@ -386,8 +528,12 @@ export default function AddModal({
                       </Label>
                       <Input
                         id="firstName"
+                        value={formData.firstName}
+                        onChange={(e) =>
+                          updateFormData("firstName", e.target.value)
+                        }
                         required
-                        className="h-9 text-sm placeholder:text-xs  "
+                        className="h-9 text-sm placeholder:text-xs"
                         placeholder="First name"
                       />
                     </div>
@@ -400,8 +546,12 @@ export default function AddModal({
                       </Label>
                       <Input
                         id="lastName"
+                        value={formData.lastName}
+                        onChange={(e) =>
+                          updateFormData("lastName", e.target.value)
+                        }
                         required
-                        className="h-9 text-sm placeholder:text-xs  "
+                        className="h-9 text-sm placeholder:text-xs"
                         placeholder="Last name"
                       />
                     </div>
@@ -437,11 +587,11 @@ export default function AddModal({
                         <PopoverContent
                           className="w-auto overflow-hidden p-0 "
                           align="end"
-                          alignOffset={-20} // Adjust this value to position the calendar properly
+                          alignOffset={-20}
                           sideOffset={10}
                           style={{
-                            maxHeight: "280px", // Limit the height
-                            overflowY: "auto", // Add scroll if needed
+                            maxHeight: "280px",
+                            overflowY: "auto",
                           }}
                         >
                           <CalendarComp
@@ -462,10 +612,14 @@ export default function AddModal({
                     >
                       Gender <span className="text-red-500">*</span>
                     </Label>
-                    <Select required>
+                    <Select
+                      required
+                      value={formData.gender}
+                      onValueChange={(value) => updateFormData("gender", value)}
+                    >
                       <SelectTrigger
                         id="gender"
-                        className="h-9 text-xs placeholder:text-xs  "
+                        className="h-9 text-xs placeholder:text-xs"
                       >
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
@@ -487,13 +641,17 @@ export default function AddModal({
                       <Input
                         id="phone"
                         type="tel"
+                        value={formData.phone}
+                        onChange={(e) =>
+                          updateFormData("phone", e.target.value)
+                        }
                         required
-                        className="h-9 text-sm placeholder:text-xs pl-9  "
+                        className="h-9 text-sm placeholder:text-xs pl-9"
                         placeholder="Phone number"
                       />
                     </div>
                   </div>
-                  {/* <div className="space-y-1.5">
+                  <div className="space-y-1.5">
                     <Label
                       htmlFor="email"
                       className="text-xs font-medium text-neutral-700"
@@ -508,11 +666,15 @@ export default function AddModal({
                       <Input
                         id="email"
                         type="email"
-                        className="h-9 text-sm placeholder:text-xs pl-9   "
+                        value={formData.email}
+                        onChange={(e) =>
+                          updateFormData("email", e.target.value)
+                        }
+                        className="h-9 text-sm placeholder:text-xs pl-9"
                         placeholder="Email address"
                       />
                     </div>
-                  </div> */}
+                  </div>
                   <div className="space-y-1.5">
                     <Label
                       htmlFor="address"
@@ -527,7 +689,11 @@ export default function AddModal({
                       <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-neutral-500" />
                       <Input
                         id="address"
-                        className="h-9 text-sm placeholder:text-xs  pl-9 "
+                        value={formData.address}
+                        onChange={(e) =>
+                          updateFormData("address", e.target.value)
+                        }
+                        className="h-9 text-sm placeholder:text-xs  pl-9"
                         placeholder="Full address"
                       />
                     </div>
@@ -536,36 +702,295 @@ export default function AddModal({
               </div>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 2 - Medical Information */}
             <div
               className={`w-1/3 p-2 transition-opacity duration-500 ${
                 currentStep === 2 ? "opacity-100" : "opacity-40"
               }`}
             >
-              <h3 className="text-lg font-medium text-neutral-800">
-                Medical Information
-              </h3>
-              <p className="text-sm text-neutral-600 mt-2">
-                Provide the patient's medical history, current medications, and
-                health conditions.
-              </p>
-              {/* Add form fields for step 2 here */}
+              {/* Scrollable form container */}
+              <div className="overflow-y-auto scrollbar-custom h-full pr-2 px-1 pb-1.5">
+                <h3 className="text-lg font-medium text-neutral-800 mb-4">
+                  Medical Information
+                </h3>
+
+                {/* Medical Conditions */}
+                <div className="space-y-3 mb-5">
+                  <Label className="text-xs font-medium text-neutral-700">
+                    Medical Conditions / Chronic Illnesses
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={currentCondition}
+                      onChange={(e) => setCurrentCondition(e.target.value)}
+                      className="h-9 text-sm placeholder:text-xs"
+                      placeholder="Add condition"
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addMedicalCondition();
+                        }
+                      }}
+                    />
+                    <Button
+                      onClick={addMedicalCondition}
+                      className="h-9 px-3 text-xs"
+                      disabled={!currentCondition.trim()}
+                    >
+                      Add
+                    </Button>
+                  </div>
+
+                  {formData.medicalConditions.length > 0 && (
+                    <div className="space-y-2">
+                      {formData.medicalConditions.map((condition, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between bg-neutral-50 p-2 rounded-md"
+                        >
+                          <span className="text-sm">{condition}</span>
+                          <button
+                            onClick={() => removeMedicalCondition(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            {}
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Current Medications */}
+                <div className="space-y-3 mb-5">
+                  <Label className="text-xs font-medium text-neutral-700">
+                    Current Medications
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={currentMedication}
+                      onChange={(e) => setCurrentMedication(e.target.value)}
+                      className="h-9 text-sm placeholder:text-xs"
+                      placeholder="Add medication"
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addMedication();
+                        }
+                      }}
+                    />
+                    <Button
+                      onClick={addMedication}
+                      className="h-9 px-3 text-xs"
+                      disabled={!currentMedication.trim()}
+                    >
+                      Add
+                    </Button>
+                  </div>
+
+                  {formData.medications.length > 0 && (
+                    <div className="space-y-2">
+                      {formData.medications.map((medication, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between bg-neutral-50 p-2 rounded-md"
+                        >
+                          <span className="text-sm">{medication}</span>
+                          <button
+                            onClick={() => removeMedication(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            {}
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Allergies */}
+                <div className="space-y-3 mb-5">
+                  <Label className="text-xs font-medium text-neutral-700">
+                    Allergies
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={currentAllergy}
+                      onChange={(e) => setCurrentAllergy(e.target.value)}
+                      className="h-9 text-sm placeholder:text-xs"
+                      placeholder="Add allergy"
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addAllergy();
+                        }
+                      }}
+                    />
+                    <Button
+                      onClick={addAllergy}
+                      className="h-9 px-3 text-xs"
+                      disabled={!currentAllergy.trim()}
+                    >
+                      Add
+                    </Button>
+                  </div>
+
+                  {formData.allergies.length > 0 && (
+                    <div className="space-y-2">
+                      {formData.allergies.map((allergy, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between bg-neutral-50 p-2 rounded-md"
+                        >
+                          <span className="text-sm">{allergy}</span>
+                          <button
+                            onClick={() => removeAllergy(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            {}
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="note"
+                    className="text-xs font-medium text-neutral-700"
+                  >
+                    Note{" "}
+                    <span className="text-neutral-400  text-[0.7rem] font-normal">
+                      (Optional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="note"
+                    value={formData.note}
+                    onChange={(e) => updateFormData("note", e.target.value)}
+                    className="h-9 text-sm placeholder:text-xs"
+                    placeholder="Add a note"
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Step 3 */}
+            {/* Step 3 - Account Information */}
             <div
               className={`w-1/3 p-2 transition-opacity duration-500 ${
                 currentStep === 3 ? "opacity-100" : "opacity-40"
               }`}
             >
-              <h3 className="text-lg font-medium text-neutral-800">
-                Review & Finish
-              </h3>
-              <p className="text-sm text-neutral-600 mt-2">
-                Review all information and complete the patient registration
-                process.
-              </p>
-              {/* Add review summary and finish button here */}
+              {/* Scrollable form container */}
+              <div className="overflow-y-auto scrollbar-custom h-full pr-2 px-1 pb-1.5">
+                <h3 className="text-lg font-medium text-neutral-800 mb-4">
+                  Account Information
+                </h3>
+
+                <div className="space-y-4">
+                  {/* Username */}
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="username"
+                      className="text-xs font-medium text-neutral-700"
+                    >
+                      Username <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="username"
+                      value={formData.username}
+                      onChange={(e) =>
+                        updateFormData("username", e.target.value)
+                      }
+                      required
+                      className="h-9 text-sm placeholder:text-xs"
+                      placeholder="Choose a username"
+                    />
+                  </div>
+
+                  {/* Password */}
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="password"
+                      className="text-xs font-medium text-neutral-700"
+                    >
+                      Password <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={formData.password}
+                        onChange={(e) =>
+                          updateFormData("password", e.target.value)
+                        }
+                        required
+                        className="h-9 text-sm placeholder:text-xs pr-10"
+                        placeholder="Create a password"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-2.5 text-neutral-500 hover:text-neutral-700"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="confirmPassword"
+                      className="text-xs font-medium text-neutral-700"
+                    >
+                      Confirm Password <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={formData.confirmPassword}
+                        onChange={(e) =>
+                          updateFormData("confirmPassword", e.target.value)
+                        }
+                        required
+                        className="h-9 text-sm placeholder:text-xs pr-10"
+                        placeholder="Confirm your password"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-2.5 text-neutral-500 hover:text-neutral-700"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+
+                    {formData.password &&
+                      formData.confirmPassword &&
+                      formData.password !== formData.confirmPassword && (
+                        <p className="text-xs text-red-500 mt-1">
+                          Passwords do not match
+                        </p>
+                      )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -575,22 +1000,33 @@ export default function AddModal({
           <button
             onClick={handlePrevStep}
             disabled={currentStep === 1}
-            className={`px-4 py-2 text-xs font-medium rounded-md transition-all duration-300
+            className={` text-xs border px-2 rounded-[4.5px] font-medium  py-1 transition-all duration-300
               ${
                 currentStep === 1
-                  ? "text-neutral-400 bg-neutral-100 cursor-not-allowed"
-                  : "text-primary bg-blue-50 hover:bg-blue-100"
+                  ? "text-neutral-400 bg-neutral-100 border-neutral-400  cursor-not-allowed"
+                  : "text-primary bg-blue-50  hover:bg-blue-100 border-primary/80"
               }`}
           >
             Previous
           </button>
 
-          <button
-            onClick={handleNextStep}
-            className="px-4 py-2 text-xs font-medium text-white bg-primary rounded-md hover:bg-blue-700 transition-all duration-300"
-          >
-            {currentStep === steps.length ? "Complete" : "Next"}
-          </button>
+          <div className="flex itmes-center justify-between gap-3">
+            <Button
+              size="sm"
+              onClick={handleNextStep}
+              className=" bg-green-500 text-xs py-1 rounded-[4.5px] hover:bg-green-700 transition-all duration-300"
+            >
+              Submit
+            </Button>
+
+            <Button
+              size="sm"
+              onClick={handleNextStep}
+              className="  hover:bg-blue-800 py-1 rounded-[4.5px] text-xs font-normal transition-all duration-300"
+            >
+              {currentStep === steps.length ? "Complete" : "Next"}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

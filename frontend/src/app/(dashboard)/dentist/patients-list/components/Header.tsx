@@ -27,7 +27,6 @@ export default function Header({
   onFilterClick = () => {},
   toggleFullscreen,
   isFullScreen,
-
 }: HeaderProps) {
   const [language, setLanguage] = useState("EN");
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
@@ -42,8 +41,8 @@ export default function Header({
 
   return (
     <>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center">
+      <div className="flex items-center justify-between mb-3 ">
+        <div className="flex items-center ">
           <h1 className="text-lg font-semibold text-foreground mr-3">
             Patients List
           </h1>
@@ -144,7 +143,7 @@ export default function Header({
       </div>
       <hr className="my-3 border-border" />
 
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center justify-start space-x-4">
           <button
             onClick={() => onViewChange("active")}
@@ -168,6 +167,7 @@ export default function Header({
           </button>
         </div>
       </div>
+      <hr className="my-3 border-border" />
 
       <div className="flex items-center justify-between gap-1.5 py-1">
         <div className="flex items-center gap-1.5 ">
