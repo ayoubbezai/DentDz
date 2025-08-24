@@ -76,8 +76,7 @@ function parseDate(dateString: string): Date | undefined {
 export default function AddModal({
   isVisible,
   closeModal,
-  isFullScreen,
-  toggleFullscreen,
+
 }: AddModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [open, setOpen] = React.useState(false);
