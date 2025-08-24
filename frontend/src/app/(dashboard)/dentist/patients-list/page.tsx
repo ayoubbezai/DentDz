@@ -21,9 +21,8 @@ import { Patient } from "./types";
 import { Mail, Phone, Calendar, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import AddModal from "./components/AddModal";
-import {patientData } from "./constant"
+import { patientData } from "./constant";
 // Sample data
-
 
 // Function to generate random background color based on name
 const getRandomColor = (name: string) => {
@@ -31,6 +30,8 @@ const getRandomColor = (name: string) => {
   const index = name.charCodeAt(0) % colors.length;
   return colors[index];
 };
+
+
 
 // Function to format date
 const formatDate = (date: Date) => {
@@ -47,6 +48,37 @@ export default function PatientsList() {
   const [data] = useState<Patient[]>(patientData);
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
+
+    const toggleFullscreen = () => {
+      if (!document.fullscreenElement) {
+        document.documentElement
+          .requestFullscreen()
+          .then(() => setIsFullScreen(true))
+          .catch((err) =>
+            console.error(
+              `Error attempting to enable fullscreen: ${err.message}`
+            )
+          );
+      } else {
+        document
+          .exitFullscreen()
+          .then(() => setIsFullScreen(false))
+          .catch((err) =>
+            console.error(`Error attempting to exit fullscreen: ${err.message}`)
+          );
+      }
+    };
+
+    useEffect(() => {
+      const handleChange = () => {
+        setIsFullScreen(!!document.fullscreenElement);
+      };
+      document.addEventListener("fullscreenchange", handleChange);
+      return () => {
+        document.removeEventListener("fullscreenchange", handleChange);
+      };
+    }, []);
 
   useEffect(() => {
     if (isAddModalOpen) {
@@ -222,6 +254,8 @@ export default function PatientsList() {
           patientCounts={patientCounts}
           onAddPatient={handleAddPatient}
           onFilterClick={handleFilterClick}
+          toggleFullscreen={toggleFullscreen}
+          isFullScreen={isFullScreen}
         />
 
         <hr className="my-4 border-border" />
@@ -295,7 +329,12 @@ export default function PatientsList() {
       )}
       {/* Modal Sidebar */}
       {isAddModalOpen && (
-        <AddModal isVisible={isVisible} closeModal={closeModal} />
+        <AddModal
+          isVisible={isVisible}
+          closeModal={closeModal}
+          toggleFullscreen={toggleFullscreen}
+          isFullScreen={isFullScreen}
+        />
       )}
     </NavBar>
   );

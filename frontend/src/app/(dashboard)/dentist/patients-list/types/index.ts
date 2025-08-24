@@ -10,6 +10,9 @@ export interface HeaderProps {
   };
   onAddPatient?: () => void;
   onFilterClick?: () => void;
+
+  isFullScreen: boolean;
+  toggleFullscreen: () => void;
 }
 
 
@@ -29,4 +32,6 @@ export interface Patient {
 export interface AddModalProps {
   isVisible: boolean;
   closeModal: () => void;
+  isFullScreen: boolean;
+  toggleFullscreen: () => void;
 }

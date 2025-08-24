@@ -25,10 +25,12 @@ export default function Header({
   patientCounts,
   onAddPatient = () => {},
   onFilterClick = () => {},
+  toggleFullscreen,
+  isFullScreen,
+
 }: HeaderProps) {
   const [language, setLanguage] = useState("EN");
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const languages = [
     { code: "EN", name: "English" },
@@ -37,34 +39,6 @@ export default function Header({
     { code: "DE", name: "Deutsch" },
     { code: "AR", name: "العربية" },
   ];
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement
-        .requestFullscreen()
-        .then(() => setIsFullscreen(true))
-        .catch((err) =>
-          console.error(`Error attempting to enable fullscreen: ${err.message}`)
-        );
-    } else {
-      document
-        .exitFullscreen()
-        .then(() => setIsFullscreen(false))
-        .catch((err) =>
-          console.error(`Error attempting to exit fullscreen: ${err.message}`)
-        );
-    }
-  };
-
-  useEffect(() => {
-    const handleChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener("fullscreenchange", handleChange);
-    return () => {
-      document.removeEventListener("fullscreenchange", handleChange);
-    };
-  }, []);
 
   return (
     <>
@@ -126,7 +100,7 @@ export default function Header({
             onClick={toggleFullscreen}
             className="p-1 rounded-md hover:bg-neutral-100 text-muted-foreground hover:text-foreground transition-colors"
           >
-            {isFullscreen ? (
+            {isFullScreen ? (
               <Minimize className="h-4 w-4" />
             ) : (
               <Maximize className="h-4 w-4" />
