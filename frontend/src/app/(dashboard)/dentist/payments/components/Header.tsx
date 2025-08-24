@@ -16,9 +16,12 @@ import ToppNavBar from "@/components/layout/TopNavBar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-export default function Header() {
-  const [activeView, setActiveView] = useState("billing");
+interface HeaderProps {
+  activeView: "billing" | "payments";
+  setActiveView: (view: "billing" | "payments") => void;
+}
 
+export default function Header({ activeView, setActiveView }: HeaderProps) {
   const financialData = {
     totalCollected: 12540.75,
     outstanding: 3240.5,
@@ -223,6 +226,8 @@ export default function Header() {
           </Button>
         </div>
       </div>
+
+      <hr className="my-3 border-border" />
     </>
   );
 }
