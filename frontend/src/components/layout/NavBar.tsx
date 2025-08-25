@@ -30,7 +30,7 @@ const navItems = [
   { icon: Calendar, label: "Appointments", href: "/appointments" },
   { icon: Receipt, label: "Payments", href: "/dentist/payments" },
   { icon: FileText, label: "Prescriptions", href: "/prescriptions" },
-  { icon: Package, label: "Inventory", href: "/inventory" },
+  { icon: Package, label: "Inventory", href: "/dentist/inventory" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: ClipboardList, label: "Tasks", href: "/tasks" },
   { icon: FolderOpen, label: "Documents", href: "/documents" },

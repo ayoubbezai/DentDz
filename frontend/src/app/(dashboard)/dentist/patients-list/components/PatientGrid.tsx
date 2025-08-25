@@ -56,11 +56,10 @@ export default function PatientGrid({
                 <Badge
                   variant="outline"
                   className={`
-                    text-xs font-medium px-1.5 py-0.5 rounded-[4px] mt-1
                     ${
                       patient.gender === "male"
-                        ? "bg-blue-100 text-blue-600 border-blue-100"
-                        : "bg-pink-100 text-pink-600 border-pink-100"
+                        ? "bg-blue-50 text-blue-700 border-blue-200"
+                        : "bg-pink-50 text-pink-700 border-pink-200"
                     }
                   `}
                 >

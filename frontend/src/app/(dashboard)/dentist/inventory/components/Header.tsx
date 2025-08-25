@@ -1,16 +1,13 @@
 import {
   AlertCircle,
-  TrendingUp,
-  TrendingDown,
-  Wallet,
-  CreditCard,
-  BarChart3,
-  Users,
+  Box,
+  Package,
+  Clock,
+  XCircle,
   Filter,
   Plus,
   Download,
   FileText,
-  Receipt,
   ChevronDown,
   Calendar,
   FileSpreadsheet,
@@ -19,13 +16,6 @@ import {
 import ToppNavBar from "@/components/layout/TopNavBar";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Calendar as CalendarComp } from "@/components/ui/calendar";
 import {
   Popover,
@@ -35,80 +25,43 @@ import {
 import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 
 interface HeaderProps {
-  activeView: "billing" | "payments";
-  setActiveView: (view: "billing" | "payments") => void;
-  onAddInvoice?: () => void;
+  activeView: "stock" | "suppliers" | "logs" | "notifications";
+  setActiveView: (
+    view: "stock" | "suppliers" | "logs" | "notifications"
+  ) => void;
+  onAddItem?: () => void;
 }
 
 export default function Header({
   activeView,
   setActiveView,
-  onAddInvoice = () => {},
+  onAddItem = () => {},
 }: HeaderProps) {
   const [exportOpen, setExportOpen] = useState(false);
   const [dateRange, setDateRange] = useState({
-    from: startOfMonth(subMonths(new Date(), 1)), // Default to start of last month
-    to: endOfMonth(subMonths(new Date(), 1)), // Default to end of last month
+    from: startOfMonth(subMonths(new Date(), 1)),
+    to: endOfMonth(subMonths(new Date(), 1)),
   });
   const exportRef = useRef<HTMLDivElement>(null);
 
-  const financialData = {
-    totalCollected: 12540.75,
-    outstanding: 3240.5,
-    expenses: 5875.25,
-    netBalance: 6665.5,
-    previousMonth: {
-      totalCollected: 11800.25,
-      outstanding: 2850.75,
-      expenses: 5420.5,
-      netBalance: 6380.25,
-    },
+  const inventoryData = {
+    totalItems: 1247,
+    needReorder: 42,
+    expired: 7,
+    outOfStock: 23,
   };
 
-  const calculateChange = (current: number, previous: number) => {
-    if (previous === 0) return 0;
-    return ((current - previous) / previous) * 100;
-  };
-
-  const changes = {
-    totalCollected: calculateChange(
-      financialData.totalCollected,
-      financialData.previousMonth.totalCollected
-    ),
-    outstanding: calculateChange(
-      financialData.outstanding,
-      financialData.previousMonth.outstanding
-    ),
-    expenses: calculateChange(
-      financialData.expenses,
-      financialData.previousMonth.expenses
-    ),
-    netBalance: calculateChange(
-      financialData.netBalance,
-      financialData.previousMonth.netBalance
-    ),
-  };
-
-  const FinancialCard = ({
+  const InventoryCard = ({
     title,
     value,
     icon: Icon,
     iconColor,
-    change,
-    isPositiveGood = true,
   }: {
     title: string;
     value: number;
     icon: React.ComponentType<any>;
     iconColor: string;
-    change: number;
-    isPositiveGood?: boolean;
   }) => {
-    const isPositive = change >= 0;
-    const isGoodChange = isPositiveGood ? isPositive : !isPositive;
-    const changeColor = isGoodChange ? "text-green-600" : "text-red-600";
-    const ChangeIcon = isPositive ? TrendingUp : TrendingDown;
-
     return (
       <div className="bg-background p-3 rounded-md border border-border">
         <div className="flex items-center justify-start mb-2">
@@ -120,19 +73,8 @@ export default function Header({
 
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold text-foreground">
-            $
-            {value.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            {value.toLocaleString("en-US")} 
           </p>
-
-          <div className={`flex items-center gap-1 ${changeColor}`}>
-            <span className="text-xs font-medium">
-              {Math.abs(change).toFixed(1)}%
-            </span>
-            <ChangeIcon className={`h-3 w-3 ${!isGoodChange && "rotate-90"}`} />
-          </div>
         </div>
       </div>
     );
@@ -162,55 +104,44 @@ export default function Header({
   };
 
   // Sample data for the sections
-  const billingItems = 42;
-  const paymentItems = 28;
+  const stockItems = inventoryData.totalItems;
+  const supplierItems = 28;
+  const logItems = 156;
+  const notificationItems = 12;
 
   return (
     <>
-      <ToppNavBar
-        title="Payments"
-        search_placeholder={
-          activeView === "billing" ? "Search Invoice Pay..." : "Search Patients Pay..."
-        }
-      />
+      <ToppNavBar title="Inventory" search_placeholder="Search In Stock..." />
       <hr className="my-3 border-border" />
 
-      {/* Financial Cards Section */}
+      {/* Inventory Cards Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-        <FinancialCard
-          title="Total Collected"
-          value={financialData.totalCollected}
-          icon={Wallet}
-          iconColor="text-green-500"
-          change={changes.totalCollected}
-          isPositiveGood={true}
-        />
-
-        <FinancialCard
-          title="Outstanding"
-          value={financialData.outstanding}
-          icon={AlertCircle}
-          iconColor="text-amber-500"
-          change={changes.outstanding}
-          isPositiveGood={false}
-        />
-
-        <FinancialCard
-          title="Expenses"
-          value={financialData.expenses}
-          icon={CreditCard}
-          iconColor="text-red-500"
-          change={changes.expenses}
-          isPositiveGood={false}
-        />
-
-        <FinancialCard
-          title="Net Balance"
-          value={financialData.netBalance}
-          icon={BarChart3}
+        <InventoryCard
+          title="Total Items"
+          value={inventoryData.totalItems}
+          icon={Box}
           iconColor="text-blue-500"
-          change={changes.netBalance}
-          isPositiveGood={true}
+        />
+
+        <InventoryCard
+          title="Need Reorder"
+          value={inventoryData.needReorder}
+          icon={Package}
+          iconColor="text-amber-500"
+        />
+
+        <InventoryCard
+          title="Expired"
+          value={inventoryData.expired}
+          icon={Clock}
+          iconColor="text-purple-500"
+        />
+
+        <InventoryCard
+          title="Out of Stock"
+          value={inventoryData.outOfStock}
+          icon={XCircle}
+          iconColor="text-gray-500"
         />
       </div>
 
@@ -220,29 +151,48 @@ export default function Header({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center justify-start space-x-4">
           <button
-            onClick={() => setActiveView("billing")}
+            onClick={() => setActiveView("stock")}
             className={`text-xs font-medium pb-1.5 transition-all duration-200 ${
-              activeView === "billing"
+              activeView === "stock"
                 ? "text-primary border-b-2 border-primary"
                 : "text-muted-foreground/70 hover:text-foreground"
             }`}
           >
-            Billing
+            Stock
           </button>
           <button
-            onClick={() => setActiveView("payments")}
+            onClick={() => setActiveView("suppliers")}
             className={`text-xs font-medium pb-1.5 transition-all duration-200 ${
-              activeView === "payments"
+              activeView === "suppliers"
                 ? "text-primary border-b-2 border-primary"
                 : "text-muted-foreground/70 hover:text-foreground"
             }`}
           >
-            Patient Payments
+            Suppliers
+          </button>
+          <button
+            onClick={() => setActiveView("logs")}
+            className={`text-xs font-medium pb-1.5 transition-all duration-200 ${
+              activeView === "logs"
+                ? "text-primary border-b-2 border-primary"
+                : "text-muted-foreground/70 hover:text-foreground"
+            }`}
+          >
+            Logs
+          </button>
+          <button
+            onClick={() => setActiveView("notifications")}
+            className={`text-xs font-medium pb-1.5 transition-all duration-200 ${
+              activeView === "notifications"
+                ? "text-primary border-b-2 border-primary"
+                : "text-muted-foreground/70 hover:text-foreground"
+            }`}
+          >
+            Notifications
           </button>
         </div>
       </div>
       <hr className="mb-3 border-border" />
-
 
       {/* Actions Section */}
       <div className="flex items-center justify-between gap-1.5 py-2 bg-background p-3 rounded-lg border border-border">
@@ -250,15 +200,20 @@ export default function Header({
           <FileText className="h-4 w-4 text-primary" />
           <span className="text-sm font-medium text-foreground/80">
             <span className="font-semibold text-[0.95rem]">
-              {activeView === "billing" ? billingItems : paymentItems}
+              {activeView === "stock" && stockItems}
+              {activeView === "suppliers" && supplierItems}
+              {activeView === "logs" && logItems}
+              {activeView === "notifications" && notificationItems}
             </span>{" "}
-            {activeView === "billing" ? "Billing Items" : "Payment Records"}
+            {activeView === "stock" && "Inventory Items"}
+            {activeView === "suppliers" && "Suppliers"}
+            {activeView === "logs" && "Log Entries"}
+            {activeView === "notifications" && "Notifications"}
           </span>
         </div>
 
         <div className="flex items-center space-x-2">
           {/* Date Range Picker */}
-
           <Button
             variant="outline"
             size="sm"
@@ -339,14 +294,15 @@ export default function Header({
               </div>
             )}
           </div>
-          {activeView === "billing" && (
+
+          {activeView === "stock" && (
             <Button
               size="sm"
               className="flex items-center gap-1.5 h-8 rounded-[4px] text-xs transition-colors"
-              onClick={onAddInvoice}
+              onClick={onAddItem}
             >
               <Plus className="h-3.5 w-3.5" />
-              Add Invoice
+              Add Item
             </Button>
           )}
         </div>

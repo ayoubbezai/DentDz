@@ -209,10 +209,19 @@ export const PatientsPaymentsTable = React.memo(
 
     const getPaymentStatus = (paid: number, total: number) => {
       if (paid === 0)
-        return { status: "Unpaid", color: "bg-red-100 text-red-800" };
+        return {
+          status: "Unpaid",
+          color: "bg-red-50 border-red-200  text-red-700",
+        };
       if (paid < total)
-        return { status: "Partial", color: "bg-yellow-100 text-yellow-600" };
-      return { status: "Paid", color: "bg-green-100 text-green-600" };
+        return {
+          status: "Partial",
+          color: "bg-amber-50 border-amber-200  text-amber-700",
+        };
+      return {
+        status: "Paid",
+        color: "bg-green-50 border-green-200 text-green-700",
+      };
     };
 
     const columns: ColumnDef<PatientPayment>[] = [
@@ -312,13 +321,7 @@ export const PatientsPaymentsTable = React.memo(
           const totalPrice = row.original.totalPrice;
           const status = getPaymentStatus(paidAmount, totalPrice);
 
-          return (
-            <Badge
-              className={`text-xs px-2 py-0.5   rounded-[4px] w-fit ${status.color}`}
-            >
-              {status.status}
-            </Badge>
-          );
+          return <Badge className={` ${status.color}`}>{status.status}</Badge>;
         },
       },
       {

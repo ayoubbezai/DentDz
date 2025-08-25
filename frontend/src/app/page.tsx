@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <NavBar>
       <div>
-        <p>hello</p>
+        hii
       </div>
     </NavBar>
   );
