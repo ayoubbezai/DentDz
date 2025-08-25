@@ -2,6 +2,7 @@
 import NavBar from "@/components/layout/NavBar";
 import Header from "./components/Header";
 import { StockTable } from "./components/StockTable";
+import { SupplierTable } from "./components/SupplierTable";
 import AddModal from "./components/AddModal";
 import { useState } from "react";
 export default function Inventory() {
@@ -27,7 +28,7 @@ export default function Inventory() {
             setActiveView={setActiveView}
             onAddItem={AddStock}
           />
-          <StockTable />
+          {activeView === "stock" ? <StockTable /> : <SupplierTable />}
         </div>
 
         {isAddModalOpen && (
