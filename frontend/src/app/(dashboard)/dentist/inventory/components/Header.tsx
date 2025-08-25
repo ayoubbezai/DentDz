@@ -30,6 +30,7 @@ interface HeaderProps {
     view: "stock" | "suppliers" | "logs" | "notifications"
   ) => void;
   onAddItem?: () => void;
+  
 }
 
 export default function Header({

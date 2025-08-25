@@ -276,7 +276,9 @@ export default function NavBar({ children }: { children: React.ReactNode }) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto bg-background">{children}</main>
+        <main className="flex-1 overflow-auto bg-background scrollbar-custom">
+          {children}
+        </main>
       </div>
     </GlobalUIProvider>
   );
